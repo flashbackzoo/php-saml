@@ -1089,7 +1089,93 @@ class OneLogin_Saml2_Response
 
             $container->replaceChild($decrypted, $encryptedAssertion);
 
-            return $decrypted->ownerDocument;
+            // RealMe edit:
+            // Unfortunately either xmlseclib or some DOM* classes in PHP appear to mangle the XML namespaces, either
+            // removing them or setting them to be the primary namespace for an element. This prevents the XML value
+            // from having it's signature digest verified later on.
+            // Here, we de-mangle the XML and manually replace all the broken tags (mainly broken because they're
+            // missing the 'saml' namespace, but also one where it defines and uses the saml2 namespace)
+            $xml = $decrypted->ownerDocument->saveXML();
+
+            $startPos = strpos($xml, '<Assertion');
+            $endPos = strpos($xml, '</Assertion');
+            $closingTagLength = 12; // strlen('</Assertion>')
+            $preAssertionText = substr($xml, 0, $startPos);
+            $assertionText = substr($xml, $startPos, ($endPos - $startPos + $closingTagLength));
+            $postAssertionText = substr($xml, ($endPos + $closingTagLength));
+
+            $search = [
+                '<Assertion xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:oasis:names:tc:SAML:2.0:assertion"',
+                '</Assertion>',
+                '<Issuer>',
+                '</Issuer>',
+                '<Subject>',
+                '</Subject>',
+                '<NameID',
+                '</NameID>',
+                '<SubjectConfirmation',
+                '</SubjectConfirmation>',
+                '<Conditions',
+                '</Conditions>',
+                '<AudienceRestriction>',
+                '</AudienceRestriction>',
+                '<Audience>',
+                '</Audience>',
+                '<AuthnStatement',
+                '</AuthnStatement>',
+                '<AuthnContext>',
+                '</AuthnContext>',
+                '<AuthnContextClassRef>',
+                '</AuthnContextClassRef>',
+                '<AttributeStatement>',
+                '</AttributeStatement>',
+                '<Attribute',
+                '</Attribute>',
+                '<saml:NameID xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"',
+                "</saml:NameID>\n", // Even hackier than the rest - only some NameID values need to be saml2 NS'd
+                '</AttributeValue>',
+            ];
+
+            $replace = [
+                '<saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"',
+                '</saml:Assertion>',
+                '<saml:Issuer>',
+                '</saml:Issuer>',
+                '<saml:Subject>',
+                '</saml:Subject>',
+                '<saml:NameID',
+                '</saml:NameID>',
+                '<saml:SubjectConfirmation',
+                '</saml:SubjectConfirmation>',
+                '<saml:Conditions',
+                '</saml:Conditions>',
+                '<saml:AudienceRestriction>',
+                '</saml:AudienceRestriction>',
+                '<saml:Audience>',
+                '</saml:Audience>',
+                '<saml:AuthnStatement',
+                '</saml:AuthnStatement>',
+                '<saml:AuthnContext>',
+                '</saml:AuthnContext>',
+                '<saml:AuthnContextClassRef>',
+                '</saml:AuthnContextClassRef>',
+                '<saml:AttributeStatement>',
+                '</saml:AttributeStatement>',
+                '<saml:Attribute',
+                '</saml:Attribute>',
+                '<saml2:NameID xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"',
+                "</saml2:NameID>\n", // Even hackier than the rest - only some NameID values need to be saml2 NS'd
+                '</saml:AttributeValue>',
+            ];
+
+            $assertionText = str_replace($search, $replace, $assertionText);
+
+            $fixedXML = $preAssertionText . $assertionText . $postAssertionText;
+
+            $newDoc = new DOMDocument();
+            $newDoc->loadXML($fixedXML);
+
+            return $newDoc;
         }
     }
 
