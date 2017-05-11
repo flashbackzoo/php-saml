@@ -1105,7 +1105,8 @@ class OneLogin_Saml2_Response
             $postAssertionText = substr($xml, ($endPos + $closingTagLength));
 
             $search = [
-                '<Assertion xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:oasis:names:tc:SAML:2.0:assertion"',
+                '<Assertion',
+                'xmlns="urn:oasis:names:tc:SAML:2.0:assertion"',
                 '</Assertion>',
                 '<Issuer>',
                 '</Issuer>',
@@ -1137,7 +1138,8 @@ class OneLogin_Saml2_Response
             ];
 
             $replace = [
-                '<saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"',
+                '<saml:Assertion',
+                'xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"',
                 '</saml:Assertion>',
                 '<saml:Issuer>',
                 '</saml:Issuer>',
