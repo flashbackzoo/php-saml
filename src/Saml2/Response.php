@@ -1175,19 +1175,21 @@ class Response
 
             $search = [
                 '<saml:NameID xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"',
-                "</saml:NameID>\n"
+                "</saml:NameID>\n",
+                "</saml:NameID></saml:AttributeValue>"
             ];
 
             $replace = [
                 '<saml2:NameID xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"',
-                "</saml2:NameID>\n"
+                "</saml2:NameID>\n",
+                "</saml2:NameID></saml:AttributeValue>"
             ];
 
             $xml = str_replace($search, $replace, $xml);
 
             // Rebuild the DOM will fix issues with namespaces as well
             $dom = new DOMDocument();
-            return Utils::loadXML($dom, $xml));
+            return Utils::loadXML($dom, $xml);
         }
     }
 
