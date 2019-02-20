@@ -1099,12 +1099,14 @@ class OneLogin_Saml2_Response
 
             $search = [
                 '<saml:NameID xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"',
-                "</saml:NameID>\n"
+                "</saml:NameID>\n",
+                "</saml:NameID></saml:AttributeValue>"
             ];
 
             $replace = [
                 '<saml2:NameID xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"',
-                "</saml2:NameID>\n"
+                "</saml2:NameID>\n",
+                "</saml2:NameID></saml:AttributeValue>"
             ];
 
             $xml = str_replace($search, $replace, $xml);
