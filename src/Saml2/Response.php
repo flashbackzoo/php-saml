@@ -380,7 +380,7 @@ class Response
 
             // Detect case not supported
             if ($this->encrypted) {
-                $encryptedIDNodes = Utils::query($this->decryptedDocument, '/samlp:Response/saml:Assertion/saml:Subject/saml:EncryptedID');
+                $encryptedIDNodes = Utils::query($this->decryptedDocument, '/saml:Assertion/saml:Subject/saml:EncryptedID');
                 if ($encryptedIDNodes->length > 0) {
                     throw new ValidationError(
                         'Unsigned SAML Response that contains a signed and encrypted Assertion with encrypted nameId is not supported.',
@@ -448,7 +448,7 @@ class Response
 
     /**
      * @return string|null the ID of the assertion in the Response
-     * 
+     *
      * @throws ValidationError
      */
     public function getAssertionId()
@@ -1031,7 +1031,7 @@ class Response
         $xpath->registerNamespace('ds', Constants::NS_DS);
         $xpath->registerNamespace('xenc', Constants::NS_XENC);
 
-        $assertionNode = '/samlp:Response/saml:Assertion';
+        $assertionNode = '/saml:Assertion';
         $signatureQuery = $assertionNode . '/ds:Signature/ds:SignedInfo/ds:Reference';
         $assertionReferenceNode = $xpath->query($signatureQuery)->item(0);
         if (!$assertionReferenceNode) {
@@ -1047,7 +1047,7 @@ class Response
                 }
                 $nameQuery = "/samlp:Response[@ID='$id']/saml:Assertion" . $assertionXpath;
             } else {
-                $nameQuery = "/samlp:Response/saml:Assertion" . $assertionXpath;
+                $nameQuery = "/saml:Assertion" . $assertionXpath;
             }
         } else {
             $uri = $assertionReferenceNode->attributes->getNamedItem('URI')->nodeValue;

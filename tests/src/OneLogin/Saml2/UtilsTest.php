@@ -53,7 +53,7 @@ class UtilsTest extends \PHPUnit\Framework\TestCase
         $dom = new DOMDocument();
 
         $attackXXE = '<?xml version="1.0" encoding="ISO-8859-1"?>
-                      <!DOCTYPE foo [  
+                      <!DOCTYPE foo [
                       <!ELEMENT foo ANY >
                       <!ENTITY xxe SYSTEM "file:///etc/passwd" >]><foo>&xxe;</foo>';
         try {
@@ -370,10 +370,10 @@ class UtilsTest extends \PHPUnit\Framework\TestCase
     public function testisHTTPS()
     {
         $this->assertFalse(Utils::isHTTPS());
-        
+
         $_SERVER['HTTPS'] = 'on';
         $this->assertTrue(Utils::isHTTPS());
-    
+
         unset($_SERVER['HTTPS']);
         $this->assertFalse(Utils::isHTTPS());
         $_SERVER['HTTP_HOST'] = 'example.com:443';
@@ -497,7 +497,7 @@ class UtilsTest extends \PHPUnit\Framework\TestCase
         $expectedUrlNQ2 = 'http://anothersp.example.com:81/example2/route.php';
         $expectedRoutedUrlNQ2 = 'http://anothersp.example.com:81/example2/route.php';
         $expectedUrl2 = 'http://anothersp.example.com:81/example2/route.php?x=test';
-        
+
         $this->assertEquals('http', Utils::getSelfProtocol());
         $this->assertEquals('anothersp.example.com', Utils::getSelfHost());
         $this->assertEquals('81', Utils::getSelfPort());
@@ -775,12 +775,12 @@ class UtilsTest extends \PHPUnit\Framework\TestCase
         $dom = new DOMDocument();
         $dom->loadXML($xml);
 
-        $assertionNodes = Utils::query($dom, '/samlp:Response/saml:Assertion');
+        $assertionNodes = Utils::query($dom, '/saml:Assertion');
         $this->assertEquals(1, $assertionNodes->length);
         $assertion = $assertionNodes->item(0);
         $this->assertEquals('saml:Assertion', $assertion->tagName);
 
-        $attributeStatementNodes = Utils::query($dom, '/samlp:Response/saml:Assertion/saml:AttributeStatement');
+        $attributeStatementNodes = Utils::query($dom, '/saml:Assertion/saml:AttributeStatement');
         $this->assertEquals(1, $attributeStatementNodes->length);
         $attributeStatement = $attributeStatementNodes->item(0);
         $this->assertEquals('saml:AttributeStatement', $attributeStatement->tagName);
@@ -795,7 +795,7 @@ class UtilsTest extends \PHPUnit\Framework\TestCase
         $signatureRes = $signatureResNodes->item(0);
         $this->assertEquals('ds:Signature', $signatureRes->tagName);
 
-        $signatureNodes = Utils::query($dom, '/samlp:Response/saml:Assertion/ds:Signature');
+        $signatureNodes = Utils::query($dom, '/saml:Assertion/ds:Signature');
         $this->assertEquals(1, $signatureNodes->length);
         $signature = $signatureNodes->item(0);
         $this->assertEquals('ds:Signature', $signature->tagName);

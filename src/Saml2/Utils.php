@@ -34,7 +34,7 @@ use Exception;
 class Utils
 {
     const RESPONSE_SIGNATURE_XPATH = "/samlp:Response/ds:Signature";
-    const ASSERTION_SIGNATURE_XPATH = "/samlp:Response/saml:Assertion/ds:Signature";
+    const ASSERTION_SIGNATURE_XPATH = "/saml:Assertion/ds:Signature";
 
     /**
      * @var bool Control if the `Forwarded-For-*` headers are used
